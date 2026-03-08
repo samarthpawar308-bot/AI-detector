@@ -1,5 +1,118 @@
-# MedSafe-AI-AI-driven medical safety assistant
+# 🏥 MedSafe AI — AI-Driven Medical Safety Assistant
 
-MedSafe AI is an intelligent, AI-powered healthcare assistance platform designed to enhance medicine safety awareness, symptom understanding, and early risk identification through a unified web-based system. Built using Streamlit, Optical Character Recognition (OCR), fuzzy matching algorithms, curated medical databases, and large language models (LLMs), the platform assists users in safely navigating medication usage and basic health concerns in an educational, non-diagnostic manner.
-MedSafe AI streamlines multiple healthcare safety workflows by enabling users to check potential drug–drug interactions, extract medicines and active salts from prescription images, receive symptom-based guidance, log post-medication experiences, and assess emergency risk levels. By combining OCR-based prescription analysis, intelligent medicine name matching, rule-based risk scoring, and AI-generated explanations, the system delivers structured, transparent, and user-friendly safety insights.
-Through the integration of computer vision, natural language processing, fuzzy logic, and generative AI, MedSafe AI provides a reliable environment for medicine awareness, preventive health education, and early warning support. The platform is particularly valuable for patients, caregivers, and health-tech researchers seeking accessible tools for medication safety monitoring, symptom clarification, and risk-aware decision support without replacing professional medical consultation.
+An AI-powered medical safety assistant that helps users analyze symptoms, check medication safety, and get AI-generated health guidance using Google Gemini.
+
+---
+
+## 📋 Project Structure
+
+```
+MedSafe-AI/
+├── streamlit_app.py          # Main Streamlit UI application
+├── symptom.py                # Symptom analysis module
+├── risk_engine.py            # Risk level assessment engine
+├── med_db.py                 # Medication database & lookup
+├── ocr_utils.py              # OCR for prescription image reading
+├── requirements.txt          # Python dependencies
+├── test_setup.py             # Environment setup tests
+├── validate_deployment.py    # Activity 4.3: E2E validation script
+├── prepare_deployment.py     # Activity 4.3: Deployment prep script
+├── .gitignore                # Excludes secrets and cache files
+├── .streamlit/
+│   ├── config.toml           # Streamlit server configuration
+│   └── secrets.toml.template # Template for API key configuration
+└── README.md                 # This file
+```
+
+---
+
+## 🚀 Local Setup & Running
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/RishitaPandey2327/MedSafe-AI.git
+cd MedSafe-AI
+```
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure API Keys
+Create `.streamlit/secrets.toml` (do NOT commit this file):
+```toml
+GEMINI_API_KEY = "your-gemini-api-key-here"
+```
+Or use environment variables:
+```bash
+export GEMINI_API_KEY="your-gemini-api-key-here"   # Mac/Linux
+set GEMINI_API_KEY=your-gemini-api-key-here        # Windows
+```
+
+### 4. Run the App
+```bash
+streamlit run streamlit_app.py
+```
+App will open at `http://localhost:8501`
+
+---
+
+## ☁️ Streamlit Cloud Deployment
+
+1. Push your code to GitHub (ensure `.streamlit/secrets.toml` is in `.gitignore`)
+2. Go to [share.streamlit.io](https://share.streamlit.io)
+3. Connect your GitHub account → Select the `MedSafe-AI` repo
+4. Set **Main file**: `streamlit_app.py` | **Branch**: `main`
+5. In **Advanced settings → Secrets**, add:
+   ```
+   GEMINI_API_KEY = "your-key-here"
+   ```
+6. Click **Deploy** 🚀
+
+---
+
+## ✅ Activity 4.3 Validation
+
+Run the deployment preparation and validation scripts:
+
+```bash
+# Step 1: Check environment and file structure
+python prepare_deployment.py
+
+# Step 2: Run full end-to-end validation
+python validate_deployment.py
+```
+
+---
+
+## 🔄 Core Workflow
+
+```
+User Input (symptoms / prescription image)
+       ↓
+symptom.py → Symptom Analysis
+       ↓
+risk_engine.py → Risk Level Assessment (Low / Medium / High)
+       ↓
+med_db.py → Medication Safety Check
+       ↓
+Google Gemini AI → Natural Language Explanation
+       ↓
+streamlit_app.py → UI Output (risk badge, recommendations, warnings)
+```
+
+---
+
+## ⚠️ Disclaimer
+
+MedSafe AI is for **educational and informational purposes only**. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.
+
+---
+
+## 👥 Contributors
+
+- Radhika Saxena (Radhika2811055)
+- Team Members
+
+**Milestone 4 — Activity 4.3: Deployment Preparation and Final Validation**
