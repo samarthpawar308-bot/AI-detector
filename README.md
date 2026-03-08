@@ -9,10 +9,14 @@ An AI-powered medical safety assistant that helps users analyze symptoms, check 
 ```
 MedSafe-AI/
 ├── streamlit_app.py          # Main Streamlit UI application
+├── app.py                    # Main Integration Entry for MedSafe AI
 ├── symptom.py                # Symptom analysis module
 ├── risk_engine.py            # Risk level assessment engine
+├── side_effects.py           # Analyzes user-reported side effects
+├── ai_explainer.py           # Provides educational AI explanations
 ├── med_db.py                 # Medication database & lookup
 ├── ocr_utils.py              # OCR for prescription image reading
+├── utils.py                  # OCR for prescription image reading
 ├── requirements.txt          # Python dependencies
 ├── test_setup.py             # Environment setup tests
 ├── validate_deployment.py    # Activity 4.3: E2E validation script
