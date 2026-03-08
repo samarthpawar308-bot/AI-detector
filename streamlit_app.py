@@ -6,7 +6,6 @@ Front-end interface and main application logic
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import pytesseract
 
 from med_db import MedicineDatabase
 from symptom import SymptomChecker
@@ -15,7 +14,7 @@ from risk_engine import RiskAssessment
 from side_effects import SideEffectAnalyzer
 
 
-# Page configuration
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="MedSafe AI",
     page_icon="💊",
@@ -24,10 +23,28 @@ st.set_page_config(
 )
 
 
-# Initialize components
+# ---------------- SESSION STATE ----------------
+def init_session():
+
+    if "prescription_text" not in st.session_state:
+        st.session_state.prescription_text = ""
+
+    if "interaction_result" not in st.session_state:
+        st.session_state.interaction_result = None
+
+    if "symptom_result" not in st.session_state:
+        st.session_state.symptom_result = None
+
+    if "side_effect_log" not in st.session_state:
+        st.session_state.side_effect_log = None
+
+    if "risk_result" not in st.session_state:
+        st.session_state.risk_result = None
+
+
+# ---------------- INITIALIZE MODULES ----------------
 @st.cache_resource
 def init_components():
-    """Initialize all application components"""
 
     med_db = MedicineDatabase()
     symptom_checker = SymptomChecker()
@@ -38,16 +55,19 @@ def init_components():
     return med_db, symptom_checker, ocr_processor, risk_assessor, side_effect_engine
 
 
+# ---------------- MAIN APP ----------------
 def main():
+
+    init_session()
 
     st.title("🏥 MedSafe AI - Intelligent Medicine Safety Assistant")
     st.markdown("---")
 
-    # Initialize components
     med_db, symptom_checker, ocr_processor, risk_assessor, side_effect_engine = init_components()
 
-    # Sidebar navigation
+    # ---------------- SIDEBAR ----------------
     with st.sidebar:
+
         st.header("Navigation")
 
         page = st.selectbox(
@@ -69,13 +89,13 @@ def main():
 
         st.write(
         """
-        MedSafe AI is your intelligent medical safety companion that helps you:
+        MedSafe AI helps you:
 
-        • Check medicine interactions and safety  
-        • Analyze symptoms and provide recommendations  
-        • Extract prescription information using OCR  
-        • Monitor medicine side effects  
-        • Assess emergency health risks
+        • Check medicine interactions  
+        • Analyze symptoms  
+        • Extract prescription data using OCR  
+        • Monitor medicine side-effects  
+        • Predict emergency health risks
         """
         )
 
@@ -84,43 +104,64 @@ def main():
 
         st.header("💊 Medicine Interaction Checker")
 
-        medicines = st.text_input("Enter medicines (comma separated):")
+        medicines = st.text_input(
+            "Enter medicines (comma separated)"
+        )
 
         if st.button("Check Interactions"):
 
-            if medicines:
+            if medicines.strip() == "":
+                st.warning("Please enter at least one medicine.")
+
+            else:
 
                 med_list = [m.strip() for m in medicines.split(",")]
 
-                interactions = med_db.check_interactions(med_list)
+                result = med_db.check_interactions(med_list)
 
-                st.success("Interaction Analysis Result")
-                st.write(interactions)
+                st.session_state.interaction_result = result
+
+        if st.session_state.interaction_result:
+
+            st.success("Interaction Result")
+
+            st.write(st.session_state.interaction_result)
 
     # ---------------- SYMPTOM ANALYSIS ----------------
     elif page == "🔍 Symptom & Doubt Solver":
 
         st.header("🔍 Symptom Interpretation")
 
-        symptoms = st.text_area("Describe your symptoms")
+        symptoms = st.text_area(
+            "Describe your symptoms"
+        )
 
         if st.button("Analyze Symptoms"):
 
-            if symptoms:
+            if symptoms.strip() == "":
+                st.warning("Please describe your symptoms.")
+
+            else:
 
                 analysis = symptom_checker.analyze(symptoms)
 
-                st.subheader("Detected Symptoms")
-                st.write(analysis["symptoms_detected"])
+                st.session_state.symptom_result = analysis
 
-                st.subheader("Possible Conditions")
-                st.write(analysis["possible_conditions"])
+        if st.session_state.symptom_result:
 
-                st.subheader("Recommendations")
-                st.write(analysis["recommendations"])
+            result = st.session_state.symptom_result
 
-                if analysis["seek_immediate_help"]:
-                    st.error("⚠️ Seek Immediate Medical Help")
+            st.subheader("Detected Symptoms")
+            st.write(result["symptoms_detected"])
+
+            st.subheader("Possible Conditions")
+            st.write(result["possible_conditions"])
+
+            st.subheader("Recommendations")
+            st.write(result["recommendations"])
+
+            if result["seek_immediate_help"]:
+                st.error("⚠️ Seek Immediate Medical Attention")
 
     # ---------------- PRESCRIPTION OCR ----------------
     elif page == "📄 Prescription OCR":
@@ -129,70 +170,86 @@ def main():
 
         uploaded_file = st.file_uploader(
             "Upload prescription image",
-            type=['png', 'jpg', 'jpeg']
+            type=["png", "jpg", "jpeg"]
         )
 
-        if uploaded_file is not None:
+        if uploaded_file:
 
             image = Image.open(uploaded_file)
 
-            st.image(image, caption="Uploaded Prescription", use_column_width=True)
+            st.image(
+                image,
+                caption="Uploaded Prescription",
+                use_column_width=True
+            )
 
             if st.button("Extract Text"):
 
-                extracted_text = ocr_processor.extract_text(image)
+                text = ocr_processor.extract_text(image)
 
-                st.text_area(
-                    "Extracted Text:",
-                    extracted_text,
-                    height=200
-                )
+                st.session_state.prescription_text = text
+
+        if st.session_state.prescription_text:
+
+            st.text_area(
+                "Extracted Text",
+                st.session_state.prescription_text,
+                height=200
+            )
 
     # ---------------- SIDE EFFECT MONITOR ----------------
     elif page == "⚠️ Side-Effect Monitor":
 
-        st.header("⚠️ Side Effect Monitoring")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            medicine = st.text_input("Medicine Name")
-
-        with col2:
-            dosage = st.selectbox(
-                "Dosage Level",
-                ["low", "normal", "high"]
-            )
-
-        side_effects = st.text_input(
-            "Experienced Side Effects (comma separated)"
-        )
+        st.header("⚠️ Experience & Side-Effect Monitor")
 
         age = st.number_input(
-            "Age",
+            "Enter your age",
             min_value=1,
             max_value=120
         )
 
         gender = st.selectbox(
-            "Gender",
+            "Select gender",
             ["Male", "Female", "Other"]
+        )
+
+        medicine = st.text_input(
+            "Enter medicine(s) taken"
+        )
+
+        dosage = st.selectbox(
+            "Dosage level",
+            ["low", "normal", "high"]
+        )
+
+        side_effects = st.text_input(
+            "Enter experienced side-effects (comma separated)"
         )
 
         if st.button("Analyze Side Effects"):
 
-            effects = [e.strip() for e in side_effects.split(",") if e]
+            if medicine == "" or side_effects == "":
+                st.warning("Please enter medicine and side-effects.")
 
-            result = side_effect_engine.analyze(
-                medicine,
-                effects,
-                age,
-                gender,
-                dosage
-            )
+            else:
 
-            st.subheader("Side Effect Analysis Result")
-            st.write(result)
+                effects = [e.strip() for e in side_effects.split(",")]
+
+                result = side_effect_engine.analyze(
+                    medicine,
+                    effects,
+                    age,
+                    gender,
+                    dosage
+                )
+
+                st.session_state.side_effect_log = result
+
+        if st.session_state.side_effect_log:
+
+            st.subheader("Side-Effect Analysis")
+
+            st.write(st.session_state.side_effect_log)
 
     # ---------------- RISK PREDICTOR ----------------
     elif page == "🚨 Emergency Risk Predictor":
@@ -200,7 +257,7 @@ def main():
         st.header("🚨 Emergency Risk Predictor")
 
         age = st.number_input(
-            "Age",
+            "Enter Age",
             min_value=1,
             max_value=120
         )
@@ -234,10 +291,21 @@ def main():
                 symptom_list
             )
 
-            st.metric("Risk Score", f"{risk_score}/100")
+            st.session_state.risk_result = {
+                "score": risk_score,
+                "assessment": assessment
+            }
 
-            st.subheader("Emergency Assessment")
-            st.write(assessment)
+        if st.session_state.risk_result:
+
+            st.metric(
+                "Risk Score",
+                f"{st.session_state.risk_result['score']}/100"
+            )
+
+            st.write(
+                st.session_state.risk_result["assessment"]
+            )
 
 
 if __name__ == "__main__":
