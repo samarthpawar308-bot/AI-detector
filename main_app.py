@@ -6,11 +6,11 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from symptom import SymptomChecker
-from risk_engine import RiskAssessment
-from side_effects import SideEffectAnalyzer
-from ai_explainer import AIExplainer
-from utils import setup_logger, log_event
+from symptom_analysis import SymptomChecker
+from risk_analysis_engine import RiskAssessment
+from side_effects_analyzer import SideEffectAnalyzer
+from symptom_explainer import AIExplainer
+from helper_functions import setup_logger, log_event
 
 
 def main():

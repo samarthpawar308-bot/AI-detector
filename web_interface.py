@@ -7,11 +7,11 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 
-from med_db import MedicineDatabase
-from symptom import SymptomChecker
-from ocr_utils import PrescriptionOCR
-from risk_engine import RiskAssessment
-from side_effects import SideEffectAnalyzer
+from medicine_database import MedicineDatabase
+from symptom_analysis import SymptomChecker
+from ocr_processing import PrescriptionOCR
+from risk_analysis_engine import RiskAssessment
+from side_effects_analyzer import SideEffectAnalyzer
 
 
 # ---------------- PAGE CONFIG ----------------

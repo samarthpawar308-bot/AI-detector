@@ -84,23 +84,23 @@ section("SECTION 1: Module Import Checks")
 
 
 def check_symptom_import():
-    import symptom
-    assert hasattr(symptom, "__name__"), "symptom module failed to load"
+    import symptom_analysis
+    assert hasattr(symptom_analysis, "__name__"), "symptom module failed to load"
 
 
 def check_risk_engine_import():
-    import risk_engine
-    assert hasattr(risk_engine, "__name__"), "risk_engine module failed to load"
+    import risk_analysis_engine
+    assert hasattr(risk_analysis_engine, "__name__"), "risk_engine module failed to load"
 
 
 def check_med_db_import():
-    import med_db
-    assert hasattr(med_db, "__name__"), "med_db module failed to load"
+    import medicine_database
+    assert hasattr(medicine_database, "__name__"), "med_db module failed to load"
 
 
 def check_ocr_utils_import():
-    import ocr_utils
-    assert hasattr(ocr_utils, "__name__"), "ocr_utils module failed to load"
+    import ocr_processing
+    assert hasattr(ocr_processing, "__name__"), "ocr_utils module failed to load"
 
 
 def check_streamlit_app_import():
@@ -166,14 +166,14 @@ section("SECTION 3: End-to-End Workflow Simulation")
 def test_symptom_analysis_flow():
     """Simulate: user types symptoms -> symptom module -> structured output."""
     try:
-        import symptom
+        import symptom_analysis
         test_symptoms = ["headache", "nausea", "dizziness"]
-        if hasattr(symptom, "analyze_symptoms"):
-            result = symptom.analyze_symptoms(test_symptoms)
-        elif hasattr(symptom, "get_symptom_analysis"):
-            result = symptom.get_symptom_analysis({"symptoms": test_symptoms})
+        if hasattr(symptom_analysis, "analyze_symptoms"):
+            result = symptom_analysis.analyze_symptoms(test_symptoms)
+        elif hasattr(symptom_analysis, "get_symptom_analysis"):
+            result = symptom_analysis.get_symptom_analysis({"symptoms": test_symptoms})
         else:
-            funcs = [f for f in dir(symptom) if not f.startswith("_")]
+            funcs = [f for f in dir(symptom_analysis) if not f.startswith("_")]
             result = {"status": "module_loaded", "functions": funcs}
         assert result is not None, "Symptom analysis returned None"
         logger.info(f"    Symptom analysis result type: {type(result).__name__}")
@@ -184,14 +184,14 @@ def test_symptom_analysis_flow():
 def test_risk_engine_flow():
     """Simulate: symptoms -> risk engine -> risk level."""
     try:
-        import risk_engine
+        import risk_analysis_engine
         mock_symptoms = ["chest pain", "shortness of breath"]
-        if hasattr(risk_engine, "assess_risk"):
-            result = risk_engine.assess_risk(mock_symptoms)
-        elif hasattr(risk_engine, "calculate_risk"):
-            result = risk_engine.calculate_risk(mock_symptoms)
-        elif hasattr(risk_engine, "get_risk_level"):
-            result = risk_engine.get_risk_level(mock_symptoms)
+        if hasattr(risk_analysis_engine, "assess_risk"):
+            result = risk_analysis_engine.assess_risk(mock_symptoms)
+        elif hasattr(risk_analysis_engine, "calculate_risk"):
+            result = risk_analysis_engine.calculate_risk(mock_symptoms)
+        elif hasattr(risk_analysis_engine, "get_risk_level"):
+            result = risk_analysis_engine.get_risk_level(mock_symptoms)
         else:
             result = {"risk": "unknown", "module": "loaded"}
         assert result is not None, "Risk engine returned None"
@@ -203,16 +203,16 @@ def test_risk_engine_flow():
 def test_med_db_flow():
     """Simulate: medication name -> DB lookup -> drug info."""
     try:
-        import med_db
+        import medicine_database
         test_med = "aspirin"
-        if hasattr(med_db, "get_medication_info"):
-            result = med_db.get_medication_info(test_med)
-        elif hasattr(med_db, "lookup"):
-            result = med_db.lookup(test_med)
-        elif hasattr(med_db, "search"):
-            result = med_db.search(test_med)
+        if hasattr(medicine_database, "get_medication_info"):
+            result = medicine_database.get_medication_info(test_med)
+        elif hasattr(medicine_database, "lookup"):
+            result = medicine_database.lookup(test_med)
+        elif hasattr(medicine_database, "search"):
+            result = medicine_database.search(test_med)
         else:
-            funcs = [f for f in dir(med_db) if not f.startswith("_")]
+            funcs = [f for f in dir(medicine_database) if not f.startswith("_")]
             result = {"status": "module_loaded", "functions": funcs}
         assert result is not None, "med_db returned None"
         logger.info(f"    Med DB result type: {type(result).__name__}")
@@ -223,14 +223,14 @@ def test_med_db_flow():
 def test_ocr_utils_flow():
     """Simulate: image input -> OCR extraction check."""
     try:
-        import ocr_utils
-        if hasattr(ocr_utils, "extract_text"):
-            assert callable(ocr_utils.extract_text), "extract_text not callable"
-        elif hasattr(ocr_utils, "process_image"):
-            assert callable(ocr_utils.process_image), "process_image not callable"
+        import ocr_processing
+        if hasattr(ocr_processing, "extract_text"):
+            assert callable(ocr_processing.extract_text), "extract_text not callable"
+        elif hasattr(ocr_processing, "process_image"):
+            assert callable(ocr_processing.process_image), "process_image not callable"
         else:
-            funcs = [f for f in dir(ocr_utils)
-                     if callable(getattr(ocr_utils, f)) and not f.startswith("_")]
+            funcs = [f for f in dir(ocr_processing)
+                     if callable(getattr(ocr_processing, f)) and not f.startswith("_")]
             assert len(funcs) > 0, "ocr_utils has no callable public functions"
             logger.info(f"    OCR utils functions found: {funcs}")
     except ImportError:
