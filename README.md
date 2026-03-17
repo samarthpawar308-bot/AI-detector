@@ -34,8 +34,8 @@ MedSafe-AI/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/RishitaPandey2327/MedSafe-AI.git
-cd MedSafe-AI
+git clone https://github.com/samarthpawar308-bot/AI-detector.git
+cd AI-detector
 ```
 
 ### 2. Install Dependencies
@@ -66,7 +66,7 @@ App will open at `http://localhost:8501`
 
 1. Push your code to GitHub (ensure `.streamlit/secrets.toml` is in `.gitignore`)
 2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub account → Select the `MedSafe-AI` repo
+3. Connect your GitHub account → Select the `AI-detector` repo
 4. Set **Main file**: `streamlit_app.py` | **Branch**: `main`
 5. In **Advanced settings → Secrets**, add:
    ```
@@ -110,14 +110,6 @@ streamlit_app.py → UI Output (risk badge, recommendations, warnings)
 
 ## ⚠️ Disclaimer
 
-MedSafe AI is for **educational and informational purposes only**. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.
+AI-detector is for **educational and informational purposes only**. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.
 
 ---
-
-## 👥 Contributors
-
-- Radhika Saxena (Radhika2811055)
-- Rishita Pandey(RishitaPandey2327)
-- Team Members
-
-**Milestone 4 — Activity 4.3: Deployment Preparation and Final Validation**
